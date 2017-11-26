@@ -136,35 +136,54 @@ void removeElement(BSTree* tree, int data)
 /* Returnerar hur manga noder som totalt finns i tradet */
 int numberOfNodes(const BSTree tree)
 {
-	static int nodeAmount = 0;
-	int returnValue = 0;
-	if (tree != NULL)
+	int nodeAmount = 0;
+	
+	if (tree == NULL)
+	{
+		return 0;
+	}
+	else
 	{
 		nodeAmount++;
-		if (tree->left != NULL)
-		{
-			numberOfNodes(tree->left);
-		}
-		if (tree->right != NULL)
-		{
-			numberOfNodes(tree->right);
-		}
+		nodeAmount += numberOfNodes(tree->left);
+		nodeAmount += numberOfNodes(tree->right);
+		return nodeAmount;
 	}
-	returnValue = nodeAmount;
-	nodeAmount = 0;
-	return returnValue;
 }
 /* Returnerar hur djupt tradet ar */
 int depth(const BSTree tree)
 {
-	return -1; //Ersatt med korrekt returvarde
+	int leftDepth = 0;
+	int rightDepth = 0;
+	int maxDepth = 0;
+	
+	// If the tree is empty immediately returns 0
+	if (tree == NULL)
+		return 0;
+	
+	if (tree->left != NULL || tree->right != NULL)
+	{
+		leftDepth += depth(tree->left);
+		rightDepth += depth(tree->right);
+		if (leftDepth >= rightDepth)
+			maxDepth = leftDepth;
+		else
+			maxDepth = rightDepth;
+	}
+	else 
+	{
+		return 1;
+	}
+	return maxDepth;
 }
 
 /* Returnerar minimidjupet for tradet
    Se math.h for anvandbara funktioner*/
 int minDepth(const BSTree tree)
 {
-	return -1; //Ersatt med korrekt returvarde
+	int nodeAmount = numberOfNodes(tree);
+	int depth = log2(nodeAmount - 1) + 1;
+	return depth;
 }
 
 /* Balansera tradet sa att depth(tree) == minDepth(tree) */
