@@ -74,11 +74,11 @@ void insertSorted(BSTree* tree, int data)
 	}
 	else if (data < (*tree)->data)														//Write post condition
 	{
-		insertSorted((*tree)->right, data);
+		insertSorted(&((*tree)->right), data);
 	}
 	else if (data > (*tree)->data)
 	{
-		insertSorted((*tree)->left, data);
+		insertSorted(&((*tree)->left), data);
 	}
 
 	/*Tank pa att tradet kan vara tomt vid insattning
@@ -106,8 +106,22 @@ void printPostorder(const BSTree tree, FILE *textfile)
 /* Returnerar 1 om 'data' finns i tree, 0 annars */
 int find(const BSTree tree, int data)
 {
-    // Tank pa att tradet kan vara tomt
-	return -1; //Ersatt med korrekt returvarde
+	if (tree->data == NULL)
+	{
+		return 0;
+	}
+	else if (data == tree->data)
+	{
+		return 1;
+	}
+	else if (data < tree->data)
+	{
+		return find(tree->right, data);
+	}
+	else if (data > tree->data)
+	{
+		return find(tree->left, data);
+	}
 }
 
 /* Tar bort 'data' fran tradet om det finns */
@@ -122,9 +136,24 @@ void removeElement(BSTree* tree, int data)
 /* Returnerar hur manga noder som totalt finns i tradet */
 int numberOfNodes(const BSTree tree)
 {
-	return -1; //Ersatt med korrekt returvarde
+	static int nodeAmount = 0;
+	int returnValue = 0;
+	if (tree != NULL)
+	{
+		nodeAmount++;
+		if (tree->left != NULL)
+		{
+			numberOfNodes(tree->left);
+		}
+		if (tree->right != NULL)
+		{
+			numberOfNodes(tree->right);
+		}
+	}
+	returnValue = nodeAmount;
+	nodeAmount = 0;
+	return returnValue;
 }
-
 /* Returnerar hur djupt tradet ar */
 int depth(const BSTree tree)
 {
