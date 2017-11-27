@@ -72,11 +72,11 @@ void insertSorted(BSTree* tree, int data)
 	{
 		*tree = createNode(data);
 	}
-	else if (data < (*tree)->data)														//Write post condition
+	else if (data > (*tree)->data)														//Write post condition
 	{
 		insertSorted(&((*tree)->right), data);
 	}
-	else if (data > (*tree)->data)
+	else if (data < (*tree)->data)
 	{
 		insertSorted(&((*tree)->left), data);
 	}
@@ -106,7 +106,7 @@ void printPostorder(const BSTree tree, FILE *textfile)
 /* Returnerar 1 om 'data' finns i tree, 0 annars */
 int find(const BSTree tree, int data)
 {
-	if (tree->data == NULL)
+	if (tree == NULL)
 	{
 		return 0;
 	}
@@ -114,11 +114,11 @@ int find(const BSTree tree, int data)
 	{
 		return 1;
 	}
-	else if (data < tree->data)
+	else if (data > tree->data)
 	{
 		return find(tree->right, data);
 	}
-	else if (data > tree->data)
+	else if (data < tree->data)
 	{
 		return find(tree->left, data);
 	}
@@ -127,6 +127,51 @@ int find(const BSTree tree, int data)
 /* Tar bort 'data' fran tradet om det finns */
 void removeElement(BSTree* tree, int data)
 {
+	if (*tree == NULL)
+	{
+		return;
+	}
+	else if (data < (*tree)->data)
+	{ 
+		removeElement(&(*tree)->left, data);
+	}
+	else if (data > (*tree)->data)
+	{
+		removeElement(&(*tree)->right, data);
+	}
+	else
+	{
+		if ((*tree)->left == NULL && (*tree)->right == NULL)
+		{
+			free(*tree);
+			*tree = NULL;
+		}
+		else if ((*tree)->left == NULL)
+		{
+			BSTree tempPtr = *tree;
+			*tree = (*tree)->right;
+			free(tempPtr);
+		}
+		else if ((*tree)->right == NULL)
+		{
+			BSTree tempPtr = *tree;
+			*tree = (*tree)->left;
+			free(tempPtr);
+		}
+		else
+		{
+			BSTree tempPtr = (*tree)->right;
+			while (tempPtr->left != NULL)
+			{
+				tempPtr = tempPtr->left;
+			}
+			(*tree)->data = tempPtr->data;
+			removeElement(&(*tree)->right, tempPtr->data);
+		}
+		// tomt left
+		// Tomt right
+
+	}
 	/* Inget data ska/kan tas bort fran ett tomt trad
      Tre fall: Ett lov (inga barn), ett barn (vanster eller hoger), tva barn
      
@@ -161,20 +206,15 @@ int depth(const BSTree tree)
 	if (tree == NULL)
 		return 0;
 	
-	if (tree->left != NULL || tree->right != NULL)
+	else
 	{
-		leftDepth += depth(tree->left);
-		rightDepth += depth(tree->right);
-		if (leftDepth >= rightDepth)
-			maxDepth = leftDepth;
+		leftDepth = depth(tree->left);
+		rightDepth = depth(tree->right);
+		if (leftDepth > rightDepth)
+			return maxDepth = leftDepth+1;
 		else
-			maxDepth = rightDepth;
+			return maxDepth = rightDepth+1;
 	}
-	else 
-	{
-		return 1;
-	}
-	return maxDepth;
 }
 
 /* Returnerar minimidjupet for tradet
