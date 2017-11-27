@@ -38,7 +38,7 @@ void testTree(BSTree tree)
     {
         insertSorted(&tree, arr[i]);
     }
-    
+	balanceTree(&tree);
     // Verifiera att alla element finns i tradet
     for (i = 0; i < 7; i++)
     {

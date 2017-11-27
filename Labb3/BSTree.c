@@ -22,15 +22,58 @@ static struct treeNode* createNode(int data)
 	}
 }
 
+static int findNumber(BSTree tree, int lastAdded)
+{
+	if (lastAdded == NULL)
+	{
+		while (tree->left != NULL)
+		{
+			tree = tree->left;
+		}
+		return tree->data;
+	}
+
+	// Senaste tillagda är mindre än vad vi just la till alltså ska vi stega vänster eller 
+	else if (lastAdded < tree->data)
+	{
+		if (tree->left != NULL && tree->left->data != lastAdded)
+		{
+			if (tree->left->right != NULL)
+			{
+				findNumber(tree->left->right, lastAdded);
+			}
+		}
+		else if(tree->right == NULL)
+		{
+			return tree->data;
+		}
+		
+	}
+
+	else if (lastAdded > tree->data)
+	{
+		
+	}
+	else
+		return tree->data;
+		
+}
+
 /* Returnerar en dynamiskt allokerad array som innehaller tradets data sorterat */
 static int* writeSortedToArray(const BSTree tree)
 {
-    /* Skapa en dynamisk array men ratt storlek
-     
-       Skriv datat frŒn tradet sorterat till arrayen (minsta till storsta)
-       - till detta kanske du behover en hjalpfunktion */
+	int* numbers = malloc(sizeof(int) * numberOfNodes(tree));
+	int numToAdd = NULL;
+	for (int i = 0; i < numberOfNodes(tree); i++)
+	{
+		numToAdd = findNumber(tree, numToAdd);
+		*(numbers + i) = numToAdd;
+	}
+	return numbers;
+
+		//Skriv datat frŒn tradet sorterat till arrayen (minsta till storsta)
+		//- till detta kanske du behover en hjalpfunktion
     
-    return NULL; //Ersatt med korrekt returvarde
 }
 
 /* Bygger upp ett sorterat, balanserat trad fran en sorterad array */
@@ -72,7 +115,7 @@ void insertSorted(BSTree* tree, int data)
 	{
 		*tree = createNode(data);
 	}
-	else if (data > (*tree)->data)														//Write post condition
+	else if (data > (*tree)->data)
 	{
 		insertSorted(&((*tree)->right), data);
 	}
@@ -168,14 +211,7 @@ void removeElement(BSTree* tree, int data)
 			(*tree)->data = tempPtr->data;
 			removeElement(&(*tree)->right, tempPtr->data);
 		}
-		// tomt left
-		// Tomt right
-
 	}
-	/* Inget data ska/kan tas bort fran ett tomt trad
-     Tre fall: Ett lov (inga barn), ett barn (vanster eller hoger), tva barn
-     
-     Glom inte att frigora noden nar den lankats ur tradet*/
 }
 
 /* Returnerar hur manga noder som totalt finns i tradet */
@@ -229,6 +265,7 @@ int minDepth(const BSTree tree)
 /* Balansera tradet sa att depth(tree) == minDepth(tree) */
 void balanceTree(BSTree* tree)
 {
+	int sortedNumbers = writeSortedToArray(*tree);
 	/* Forslag pa algoritm:
 	   - overfor tradet till en dynamiskt allokerad array med writeSortedToArray()
 	   - tom tradet med freeTree()
