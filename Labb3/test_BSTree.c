@@ -16,9 +16,7 @@ int main(void)
 {
 	
     BSTree tree = emptyTree();
-	//menuTree(tree);
 	testTree(tree);
-	//testTree(tree);
 	//menuTree(tree);
     
     return 0;
@@ -162,7 +160,7 @@ void menuTree(BSTree tree)
                     printf("%d was not found in the tree", data);
                 
                 break;
-			case 11: printf("Ending tree menu\n"); break;
+			case 11: freeTree(&tree); printf("Ending tree menu\n"); break;
             default: printf("Wrong input\n");
         }
         

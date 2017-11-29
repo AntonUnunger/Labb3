@@ -27,7 +27,7 @@ static struct treeNode* createNode(int data)
 static int* fillArray(BSTree tree, int *numbers)
 {
 	static int i = 0;
-	if ((*numbers+i) != NULL)
+	if ((numbers[i]) != NULL)
 	{
 		i++;
 	}
@@ -36,7 +36,7 @@ static int* fillArray(BSTree tree, int *numbers)
 		return numbers;
 	}
 	fillArray(tree->left, numbers);
-	*(numbers+i) = tree->data;
+	numbers[i] = tree->data;
 	fillArray(tree->right, numbers);
 }
 
@@ -87,14 +87,15 @@ void insertSorted(BSTree* tree, int data)
 	if (*tree == NULL)
 	{
 		*tree = createNode(data);
+		return;
 	}
-	else if (data > (*tree)->data)
+	else if (data <= (*tree)->data)
 	{
-		insertSorted(&((*tree)->right), data);
+		insertSorted(&(*tree)->left, data);
 	}
-	else if (data < (*tree)->data)
+	else
 	{
-		insertSorted(&((*tree)->left), data);
+		insertSorted(&(*tree)->right, data);
 	}
 
 	/*Tank pa att tradet kan vara tomt vid insattning
@@ -258,8 +259,8 @@ int minDepth(const BSTree tree)
 void balanceTree(BSTree* tree)
 {
 	int *sortedNumbers = writeSortedToArray(*tree);
-	freeTree(tree);
-	buildTreeSortedFromArray(tree , sortedNumbers, numberOfNodes(tree));
+	freeTree(*(&(tree)));
+//	buildTreeSortedFromArray(tree , sortedNumbers, numberOfNodes(tree));
 	/* Forslag pa algoritm:
 	   - overfor tradet till en dynamiskt allokerad array med writeSortedToArray()
 	   - tom tradet med freeTree()
@@ -282,7 +283,7 @@ void freeTree(BSTree* tree)
 	freeTree(&(*tree)->left);
 	freeTree(&(*tree)->right);
 	free(*tree);
-	tree = NULL;
+	*tree = NULL;
 	
 	// Post-condition: tradet ar tomt
 }
