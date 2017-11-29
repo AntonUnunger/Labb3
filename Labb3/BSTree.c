@@ -22,53 +22,20 @@ static struct treeNode* createNode(int data)
 	}
 }
 
-static int findNumber(BSTree tree, int lastAdded)
+static int fillArray(BSTree tree, int *numbers)
 {
-	if (lastAdded == NULL)
+	if (tree->left != NULL)
 	{
-		while (tree->left != NULL)
-		{
-			tree = tree->left;
-		}
-		return tree->data;
+		fillArray(tree->left, numbers);
 	}
 
-	// Senaste tillagda är mindre än vad vi just la till alltså ska vi stega vänster eller 
-	else if (lastAdded < tree->data)
-	{
-		if (tree->left != NULL && tree->left->data != lastAdded)
-		{
-			if (tree->left->right != NULL)
-			{
-				findNumber(tree->left->right, lastAdded);
-			}
-		}
-		else if(tree->right == NULL)
-		{
-			return tree->data;
-		}
-		
-	}
-
-	else if (lastAdded > tree->data)
-	{
-		
-	}
-	else
-		return tree->data;
-		
 }
 
 /* Returnerar en dynamiskt allokerad array som innehaller tradets data sorterat */
 static int* writeSortedToArray(const BSTree tree)
 {
 	int* numbers = malloc(sizeof(int) * numberOfNodes(tree));
-	int numToAdd = NULL;
-	for (int i = 0; i < numberOfNodes(tree); i++)
-	{
-		numToAdd = findNumber(tree, numToAdd);
-		*(numbers + i) = numToAdd;
-	}
+	numbers = fillArray(tree, numbers);
 	return numbers;
 
 		//Skriv datat frŒn tradet sorterat till arrayen (minsta till storsta)
@@ -133,17 +100,36 @@ void insertSorted(BSTree* tree, int data)
    Det racker att ni implementerar LR ordningarna*/
 void printPreorder(const BSTree tree, FILE *textfile)
 {
-
+	if (tree == NULL)
+	{
+		return;
+	}
+	
+	printf("%i", tree->data);
+	printPreorder(tree->left, stdout);
+	printPreorder(tree->right, stdout);
 }
 
 void printInorder(const BSTree tree, FILE *textfile)
 {
-
+	if (tree == NULL)
+	{
+		return;
+	}
+	printPreorder(tree->left, stdout);
+	printf("%i", tree->data);
+	printPreorder(tree->right, stdout);
 }
 
 void printPostorder(const BSTree tree, FILE *textfile)
 {
-
+	if (tree == NULL)
+	{
+		return;
+	}
+	printPreorder(tree->left, stdout);
+	printPreorder(tree->right, stdout);
+	printf("%i", tree->data);
 }
 
 /* Returnerar 1 om 'data' finns i tree, 0 annars */
