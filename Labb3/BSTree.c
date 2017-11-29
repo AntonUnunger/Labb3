@@ -22,25 +22,28 @@ static struct treeNode* createNode(int data)
 	}
 }
 
-static int fillArray(BSTree tree, int *numbers)
+static int* fillArray(BSTree tree, int *numbers)
 {
-	if (tree->left != NULL)
+	static int i = 0;
+	if ((*numbers+i) != NULL)
 	{
-		fillArray(tree->left, numbers);
+		i++;
 	}
-
+	if (tree == NULL)
+	{
+		return numbers;
+	}
+	fillArray(tree->left, numbers);
+	*(numbers+i) = tree->data;
+	fillArray(tree->right, numbers);
 }
 
 /* Returnerar en dynamiskt allokerad array som innehaller tradets data sorterat */
 static int* writeSortedToArray(const BSTree tree)
 {
-	int* numbers = malloc(sizeof(int) * numberOfNodes(tree));
+	int* numbers = calloc(numberOfNodes(tree), sizeof(int));
 	numbers = fillArray(tree, numbers);
 	return numbers;
-
-		//Skriv datat frŒn tradet sorterat till arrayen (minsta till storsta)
-		//- till detta kanske du behover en hjalpfunktion
-    
 }
 
 /* Bygger upp ett sorterat, balanserat trad fran en sorterad array */
@@ -105,7 +108,7 @@ void printPreorder(const BSTree tree, FILE *textfile)
 		return;
 	}
 	
-	printf("%i", tree->data);
+	printf("%d", tree->data);
 	printPreorder(tree->left, stdout);
 	printPreorder(tree->right, stdout);
 }
@@ -116,9 +119,9 @@ void printInorder(const BSTree tree, FILE *textfile)
 	{
 		return;
 	}
-	printPreorder(tree->left, stdout);
-	printf("%i", tree->data);
-	printPreorder(tree->right, stdout);
+	printInorder(tree->left, stdout);
+	printf("%d", tree->data);
+	printInorder(tree->right, stdout);
 }
 
 void printPostorder(const BSTree tree, FILE *textfile)
@@ -127,9 +130,9 @@ void printPostorder(const BSTree tree, FILE *textfile)
 	{
 		return;
 	}
-	printPreorder(tree->left, stdout);
-	printPreorder(tree->right, stdout);
-	printf("%i", tree->data);
+	printPostorder(tree->left, stdout);
+	printPostorder(tree->right, stdout);
+	printf("%d", tree->data);
 }
 
 /* Returnerar 1 om 'data' finns i tree, 0 annars */
@@ -251,7 +254,8 @@ int minDepth(const BSTree tree)
 /* Balansera tradet sa att depth(tree) == minDepth(tree) */
 void balanceTree(BSTree* tree)
 {
-	int sortedNumbers = writeSortedToArray(*tree);
+	int *sortedNumbers = writeSortedToArray(*tree);
+	freeTree(tree);
 	/* Forslag pa algoritm:
 	   - overfor tradet till en dynamiskt allokerad array med writeSortedToArray()
 	   - tom tradet med freeTree()
@@ -267,6 +271,15 @@ void balanceTree(BSTree* tree)
 /* Tom tradet och frigor minnet for de olika noderna */
 void freeTree(BSTree* tree)
 {
+	if (*tree == NULL)
+	{
+		return;
+	}
+	freeTree(&(*tree)->left);
+	freeTree(&(*tree)->right);
+	free(*tree);
+	tree = NULL;
+	
 	// Post-condition: tradet ar tomt
 }
 
