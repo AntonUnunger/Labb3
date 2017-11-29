@@ -11,15 +11,17 @@
 /* Skapar en tradnod med det givna datat genom att allokera minne for noden. Glom inte att initiera pekarna*/
 static struct treeNode* createNode(int data)
 {
-	struct treeNode *tempNode = malloc(sizeof(struct treeNode));
+	struct treeNode* tempNode = (struct treeNode*)malloc(sizeof(struct treeNode));
 
-	if (tempNode != NULL)
+	if (!tempNode) 
 	{
-		tempNode->data = data;
-		tempNode->left = NULL;
-		tempNode->right = NULL;
-		return tempNode;
+		return NULL;
 	}
+		
+	tempNode->data = data;
+	tempNode->left = NULL;
+	tempNode->right = NULL;
+	return tempNode;
 }
 
 static int* fillArray(BSTree tree, int *numbers)
@@ -49,7 +51,8 @@ static int* writeSortedToArray(const BSTree tree)
 /* Bygger upp ett sorterat, balanserat trad fran en sorterad array */
 static void buildTreeSortedFromArray(BSTree* tree, const int arr[], int size)
 {
-    /* Bygg rekursivt fran mitten.
+	
+	/* Bygg rekursivt fran mitten.
        Mittenelementet i en delarray skapar rot i deltradet
        Vanster delarray bygger vanster deltrad
        Hoger delarray bygger hoger deltrad*/
@@ -256,6 +259,7 @@ void balanceTree(BSTree* tree)
 {
 	int *sortedNumbers = writeSortedToArray(*tree);
 	freeTree(tree);
+	buildTreeSortedFromArray(tree , sortedNumbers, numberOfNodes(tree));
 	/* Forslag pa algoritm:
 	   - overfor tradet till en dynamiskt allokerad array med writeSortedToArray()
 	   - tom tradet med freeTree()
