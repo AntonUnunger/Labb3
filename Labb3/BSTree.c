@@ -51,11 +51,32 @@ static int* writeSortedToArray(const BSTree tree)
 /* Bygger upp ett sorterat, balanserat trad fran en sorterad array */
 static void buildTreeSortedFromArray(BSTree* tree, const int arr[], int size)
 {
+	buildBalancedTree(tree, arr, 0, size);
 	
-	/* Bygg rekursivt fran mitten.
-       Mittenelementet i en delarray skapar rot i deltradet
-       Vanster delarray bygger vanster deltrad
-       Hoger delarray bygger hoger deltrad*/
+	// When tree has been built the array is freed
+	free(arr);
+	arr = NULL;
+}
+
+static void buildBalancedTree(BSTree* tree, const int arr[], int lowerLimit, int upperLimit)
+{
+	// If lower limit is more than upper limit all numbers have been inserted
+	if (lowerLimit > upperLimit)
+	{
+		return NULL;
+	}
+	
+	// Splits the tree into half to insert the mid element
+	int mid = ((lowerLimit+ upperLimit) / 2);
+
+	// Inserts the number that is in the middle
+	insertSorted(tree, arr[mid]);
+
+	// Calls the function with upper limit that is 1 lower than the last number
+	buildBalancedTree(&(*tree)->left, arr, lowerLimit, mid - 1);
+
+	// When all smaller numbers are inserted, increases the lower limit by 1
+	buildBalancedTree(&(*tree)->right, arr, mid + 1, upperLimit);
 }
 
 
@@ -87,7 +108,7 @@ void insertSorted(BSTree* tree, int data)
 	if (*tree == NULL)
 	{
 		*tree = createNode(data);
-		return;
+		return NULL;
 	}
 	else if (data <= (*tree)->data)
 	{
@@ -259,7 +280,9 @@ int minDepth(const BSTree tree)
 void balanceTree(BSTree* tree)
 {
 	int *sortedNumbers = writeSortedToArray(*tree);
-	freeTree(*(&(tree)));
+	int length = numberOfNodes(*tree) - 1;
+	freeTree(tree);
+	buildTreeSortedFromArray(tree, sortedNumbers, length);
 //	buildTreeSortedFromArray(tree , sortedNumbers, numberOfNodes(tree));
 	/* Forslag pa algoritm:
 	   - overfor tradet till en dynamiskt allokerad array med writeSortedToArray()

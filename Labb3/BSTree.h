@@ -21,6 +21,8 @@ int isEmpty(const BSTree tree);
 /* Satter in 'data' sorterat i *tree */
 void insertSorted(BSTree* tree, int data);
 
+static void buildBalancedTree(BSTree* tree, const int arr[], int lowerLimit, int upperLimit);
+
 /* Utskriftsfunktioner*/
 void printPreorder(const BSTree tree, FILE *textfile);
 void printInorder(const BSTree tree, FILE *textfile);

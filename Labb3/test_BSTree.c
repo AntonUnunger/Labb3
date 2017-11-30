@@ -14,10 +14,11 @@ void menuTree(BSTree tree);
 
 int main(void)
 {
-	
+	char c;
     BSTree tree = emptyTree();
-	testTree(tree);
-	//menuTree(tree);
+	//testTree(tree);
+	menuTree(tree);
+	scanf("%c", &c);
     
     return 0;
 }
@@ -37,7 +38,6 @@ void testTree(BSTree tree)
     {
         insertSorted(&tree, arr[i]);
     }
-	balanceTree(&tree);
     // Verifiera att alla element finns i tradet
     for (i = 0; i < 7; i++)
     {
